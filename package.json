@@ -1,0 +1,13 @@
+{
+  "name": "smasa-online-cbt",
+  "version": "1.0.0",
+  "description": "SMASA-Online Computer Based Test application with Neumorphic, Glassmorphic, and Claymorphic UI design.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.1"
+  }
+}

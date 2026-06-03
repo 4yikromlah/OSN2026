@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBT Olympiad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --accent: #f43f5e;
+      --success: #10b981;
+      --glass: rgba(255, 255, 255, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+    }
+
+    /* Glassmorphism Card */
+    .card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      padding: 40px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+    }
+
+    p.subtitle {
+      color: var(--text-light);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    /* Form Styles */
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      background: var(--primary);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    /* Quiz Layout */
+    #quiz-app {
+      display: none;
+      width: 100%;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: var(--glass);
+      padding: 15px 25px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    #timer {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-container {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .question-card {
+      margin-bottom: 30px;
+    }
+
+    .question-text {
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    .options-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option-btn {
+      padding: 16px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      background: white;
+      text-align: left;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .option-btn:hover {
+      border-color: var(--primary);
+      background: #f5f3ff;
+    }
+
+    .option-btn.selected {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .option-key {
+      font-weight: 700;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: var(--text);
+    }
+
+    .option-btn.selected .option-key {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .nav-btns {
+      display: flex;
+      gap: 15px;
+    }
+
+    /* Loading Spinner */
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #FFF;
+      border-bottom-color: var(--primary);
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden { display: none !important; }
+
+    /* Success State */
+    .success-icon {
+      font-size: 5rem;
+      color: var(--success);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .card { padding: 25px; }
+      h1 { font-size: 1.8rem; }
+      .question-text { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Login Screen -->
+    <div id="login-screen" class="card">
+      <h1>CBT Olimpiad</h1>
+      <p class="subtitle">Silakan masukkan nama Anda untuk memulai ujian.</p>
+      
+      <div class="input-group">
+        <label for="student-name">Nama Lengkap</label>
+        <input type="text" id="student-name" placeholder="Contoh: Budi Santoso" autocomplete="off">
+      </div>
+      
+      <button class="btn" id="start-btn">
+        <span>Mulai Ujian</span>
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+      </button>
+      
+      <div id="login-loader" class="loader hidden"></div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-app">
+      <div class="header-bar">
+        <div id="user-display" style="font-weight: 600;"></div>
+        <div id="timer">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span id="time-left">60:00</span>
+        </div>
+      </div>
+
+      <div class="progress-container">
+        <div id="progress-bar"></div>
+      </div>
+
+      <div class="card">
+        <div id="question-container">
+          <!-- Question will be injected here -->
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn hidden" id="prev-btn" style="background: #94a3b8;">Sebelumnya</button>
+          <button class="btn" id="next-btn">Berikutnya</button>
+          <button class="btn hidden" id="submit-btn" style="background: var(--success);">Selesai & Kirim</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="card hidden" style="text-align: center;">
+      <div class="success-icon">✓</div>
+      <h1>Ujian Selesai!</h1>
+      <p class="subtitle">Terima kasih telah mengikuti olimpiade ini. Skor Anda telah direkam.</p>
+      <div id="final-score" style="font-size: 3rem; font-weight: 700; color: var(--primary); margin: 20px 0;"></div>
+      <button class="btn" onclick="location.reload()">Selesai</button>
+    </div>
+  </div>
+
+  <script>
+    let questions = [];
+    let currentIdx = 0;
+    let answers = {};
+    let studentName = "";
+    let timerInterval;
+    let timeLeft = 60 * 60; // 60 minutes in seconds
+
+    const loginScreen = document.getElementById('login-screen');
+    const quizApp = document.getElementById('quiz-app');
+    const resultScreen = document.getElementById('result-screen');
+    const questionContainer = document.getElementById('question-container');
+    const startBtn = document.getElementById('start-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const nameInput = document.getElementById('student-name');
+    const progressBar = document.getElementById('progress-bar');
+
+    startBtn.addEventListener('click', () => {
+      studentName = nameInput.value.trim();
+      if (!studentName) {
+        alert("Harap masukkan nama Anda!");
+        return;
+      }
+
+      startBtn.classList.add('hidden');
+      document.getElementById('login-loader').classList.remove('hidden');
+
+      // Fetch questions from GAS
+      google.script.run
+        .withSuccessHandler(data => {
+          questions = data;
+          initQuiz();
+        })
+        .withFailureHandler(err => {
+          alert("Gagal mengambil soal: " + err.message);
+          startBtn.classList.remove('hidden');
+          document.getElementById('login-loader').classList.add('hidden');
+        })
+        .getQuestions();
+    });
+
+    function initQuiz() {
+      loginScreen.classList.add('hidden');
+      quizApp.classList.remove('hidden');
+      document.getElementById('user-display').innerText = studentName;
+      
+      startTimer();
+      renderQuestion();
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('time-left').innerText = 
+          `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          finishQuiz();
+        }
+      }, 1000);
+    }
+
+    function renderQuestion() {
+      const q = questions[currentIdx];
+      const progress = ((currentIdx + 1) / questions.length) * 100;
+      progressBar.style.width = progress + "%";
+
+      questionContainer.innerHTML = `
+        <div class="question-card">
+          <p class="subtitle" style="text-align: left; margin-bottom: 10px;">Soal ${currentIdx + 1} dari ${questions.length}</p>
+          <div class="question-text">${q.pertanyaan}</div>
+          <div class="options-grid">
+            ${q.opsi.map(opt => `
+              <button class="option-btn ${answers[currentIdx] === opt.key ? 'selected' : ''}" 
+                      onclick="selectOption('${opt.key}')">
+                <span class="option-key">${opt.key}</span>
+                <span>${opt.text}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      // Update buttons
+      prevBtn.classList.toggle('hidden', currentIdx === 0);
+      
+      if (currentIdx === questions.length - 1) {
+        nextBtn.classList.add('hidden');
+        submitBtn.classList.remove('hidden');
+      } else {
+        nextBtn.classList.remove('hidden');
+        submitBtn.classList.add('hidden');
+      }
+    }
+
+    window.selectOption = (key) => {
+      answers[currentIdx] = key;
+      renderQuestion();
+    };
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIdx < questions.length - 1) {
+        currentIdx++;
+        renderQuestion();
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIdx > 0) {
+        currentIdx--;
+        renderQuestion();
+      }
+    });
+
+    submitBtn.addEventListener('click', () => {
+      if (confirm("Apakah Anda yakin ingin mengakhiri ujian?")) {
+        finishQuiz();
+      }
+    });
+
+    function finishQuiz() {
+      clearInterval(timerInterval);
+      quizApp.classList.add('hidden');
+      
+      // Calculate score
+      let correctCount = 0;
+      questions.forEach((q, idx) => {
+        if (answers[idx] === q.jawaban) {
+          correctCount++;
+        }
+      });
+      
+      const score = Math.round((correctCount / questions.length) * 100);
+      document.getElementById('final-score').innerText = score;
+      resultScreen.classList.remove('hidden');
+
+      // Submit to Google Sheets
+      google.script.run
+        .withSuccessHandler(res => console.log(res))
+        .submitScore(studentName, score);
+    }
+  </script>
+</body>
+</html>

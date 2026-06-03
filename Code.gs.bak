@@ -1,0 +1,73 @@
+/**
+ * CBT Backend for Google Apps Script
+ * Handles serving the HTML and interacting with Google Sheets
+ */
+
+function doGet() {
+  return HtmlService.createTemplateFromFile('index')
+    .evaluate()
+    .setTitle('CBT Olympiad')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+/**
+ * Fetches questions from the 'Soal' sheet and randomizes them
+ */
+function getQuestions() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Soal');
+  
+  if (!sheet) {
+    throw new Error("Sheet 'Soal' not found! Please create it first.");
+  }
+  
+  const data = sheet.getDataRange().getValues();
+  const headers = data.shift(); // Remove headers
+  
+  // Map rows to objects
+  let questions = data.map(row => {
+    return {
+      no: row[0],
+      pertanyaan: row[1],
+      opsi: [
+        { text: row[2], key: 'A' },
+        { text: row[3], key: 'B' },
+        { text: row[4], key: 'C' },
+        { text: row[5], key: 'D' }
+      ],
+      jawaban: row[6]
+    };
+  });
+  
+  // Shuffle questions
+  return shuffleArray(questions);
+}
+
+/**
+ * Submits the score to the 'Hasil' sheet
+ */
+function submitScore(studentName, score) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName('Hasil');
+  
+  // Create 'Hasil' sheet if it doesn't exist
+  if (!sheet) {
+    sheet = ss.insertSheet('Hasil');
+    sheet.appendRow(['Timestamp', 'Nama Siswa', 'Skor']);
+  }
+  
+  sheet.appendRow([new Date(), studentName, score]);
+  return "Berhasil mengirim skor!";
+}
+
+/**
+ * Helper function to shuffle an array
+ */
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}

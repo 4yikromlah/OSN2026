@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMASA-Online - Computer Based Test</title>
+  
+  <!-- CSS Stylesheets -->
+  <script type="module" crossorigin src="/assets/index-BlMeZacC.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-ymN2ewjd.css">
+</head>
+<body>
+
+  <!-- Header Permanen & Konsisten (Sticky Navbar) -->
+  <header class="hidden">
+    <div class="logo-container">
+      <div class="logo-icon-box">
+        <!-- Shield icon in logo box -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h2>SMASA-<span>Online</span></h2>
+        <p>Computer Based Test</p>
+      </div>
+    </div>
+
+    <!-- Clock dynamic pill -->
+    <div class="header-clock-pill">
+      <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+      <span id="header-clock-text">Memuat Waktu...</span>
+    </div>
+
+    <!-- Controls (Theme, User badge, Logout) -->
+    <div class="header-user-controls">
+      <button class="btn-theme-toggle" id="btn-theme-toggle" title="Ganti Tema">
+        <i data-lucide="moon"></i>
+      </button>
+      <div class="user-badge-pill">
+        <span class="role-title" id="header-user-role">ACTIVE USER</span>
+        <span class="user-status" id="header-user-status">Administrator</span>
+      </div>
+      <button class="btn-logout" id="btn-logout" title="Keluar dari Sistem">
+        <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+
+    <!-- 1. LOGIN VIEW -->
+    <div id="login-view" class="login-box">
+      <div class="login-header">
+        <div class="logo-icon-box" style="margin: 0 auto 15px auto; width: 64px; height: 64px;">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <h1>SMASA-Online</h1>
+        <p>Masuk ke portal ujian Computer Based Test</p>
+      </div>
+
+      <!-- Role Tabs (Siswa vs Admin) -->
+      <div class="login-role-tabs">
+        <button class="login-role-btn active" data-role="siswa">Portal Siswa</button>
+        <button class="login-role-btn" data-role="admin">Administrator</button>
+      </div>
+
+      <!-- Fields Siswa -->
+      <div id="login-student-fields" class="login-fields-container">
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label for="login-student-name">Nama Lengkap Siswa</label>
+          <input type="text" id="login-student-name" class="form-input" placeholder="Contoh: Budi Pratama" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="login-student-nisn">Nomor Induk Siswa Nasional (NISN)</label>
+          <input type="text" id="login-student-nisn" class="form-input" placeholder="Contoh: 0054321098" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Fields Admin (Hidden by default) -->
+      <div id="login-admin-fields" class="login-fields-container hidden">
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label for="login-admin-username">Username Admin</label>
+          <input type="text" id="login-admin-username" class="form-input" placeholder="Masukkan username" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="login-admin-password">Password Admin</label>
+          <input type="password" id="login-admin-password" class="form-input" placeholder="Masukkan password">
+        </div>
+      </div>
+
+      <button class="btn-clay-primary" id="btn-do-login" style="width: 100%; justify-content: center; padding: 14px; font-size: 1rem; border-radius: 18px;">
+        <i data-lucide="log-in" style="width: 18px; height: 18px;"></i> MASUK KE SISTEM
+      </button>
+    </div>
+
+
+    <!-- 2. STUDENT DASHBOARD VIEW -->
+    <div id="student-dashboard-view" class="hidden" style="display: flex; flex-direction: column; gap: 30px;">
+      <!-- Welcome Header -->
+      <div class="stat-card" style="padding: 25px 35px; border-left: 6px solid #3b82f6;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <h1 style="font-size: 1.6rem; font-weight: 800;">Selamat Datang di Portal CBT</h1>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Halo <span id="student-welcome-name" style="font-weight: 700; color: #3b82f6;">Siswa</span>, silakan pilih mata pelajaran aktif di bawah untuk memulai ujian.</p>
+        </div>
+        <div class="stat-icon-circle blue">
+          <i data-lucide="user"></i>
+        </div>
+      </div>
+
+      <!-- Stats Grid Siswa -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="label">Ujian Aktif</span>
+            <span class="value" id="stud-stat-total-exams">0</span>
+            <span class="desc">Paket ujian tersedia</span>
+          </div>
+          <div class="stat-icon-circle blue">
+            <i data-lucide="book-open"></i>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="label">Ujian Diikuti</span>
+            <span class="value" id="stud-stat-total-attempts">0</span>
+            <span class="desc">Ujian yang selesai dikerjakan</span>
+          </div>
+          <div class="stat-icon-circle teal">
+            <i data-lucide="check-square"></i>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="label">Rata-Rata Nilai</span>
+            <span class="value" id="stud-stat-average-score">0%</span>
+            <span class="desc">Akumulasi seluruh nilai</span>
+          </div>
+          <div class="stat-icon-circle green">
+            <i data-lucide="award"></i>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="label">Status Kelulusan</span>
+            <span class="value" id="stud-stat-last-kkm">-</span>
+            <span class="desc">Evaluasi ujian terakhir</span>
+          </div>
+          <div class="stat-icon-circle yellow">
+            <i data-lucide="shield-check"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split content grid -->
+      <div class="content-layout">
+        <!-- Left: Ujian Tersedia -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>Daftar Ujian Aktif</h3>
+          </div>
+          <div class="exam-list-container" id="student-available-exams">
+            <!-- Diisi dinamis -->
+          </div>
+        </div>
+        <!-- Right: Riwayat pengerjaan -->
+        <div class="right-panel-card" style="padding: 30px;">
+          <div class="detail-section-title" style="margin-bottom: 20px;">
+            <span>Riwayat Hasil Evaluasi Ujian</span>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 8%">No</th>
+                  <th>Paket Ujian</th>
+                  <th>Tanggal Pelaksanaan</th>
+                  <th>Nilai Akhir</th>
+                  <th style="width: 25%">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="student-attempts-body">
+                <!-- Diisi dinamis -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 3. EXAM ROOM VIEW -->
+    <div id="exam-room-view" class="hidden">
+      <div class="exam-layout">
+        <!-- Kolom Kiri: Soal, Opsi, Kontrol Navigasi -->
+        <div class="exam-main-panel">
+          <div class="panel-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+            <span class="exam-item-badge" id="exam-question-number-badge">SOAL NOMOR 1</span>
+            
+            <!-- Accessibility font size controller -->
+            <div class="accessibility-bar">
+              <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-right: 5px;">Ukuran Teks:</span>
+              <button class="btn-font-control" onclick="changeExamFontSize('decrease')" title="Perkecil Teks">A-</button>
+              <button class="btn-font-control" onclick="changeExamFontSize('reset')" title="Normal">A</button>
+              <button class="btn-font-control" onclick="changeExamFontSize('increase')" title="Perbesar Teks">A+</button>
+            </div>
+          </div>
+
+          <!-- Question Body -->
+          <div id="exam-question-area" style="min-height: 250px;">
+            <!-- Diisi dinamis oleh app.js -->
+          </div>
+
+          <!-- Bottom Navigation bar -->
+          <div class="exam-footer-actions" style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+            <button class="btn-clay-neutral" id="exam-btn-prev" onclick="prevQuestion()" style="cursor: pointer;">
+              <i data-lucide="chevron-left"></i> Sebelumnya
+            </button>
+            <button class="btn-clay-neutral" id="exam-btn-flag" onclick="toggleExamFlag()" style="cursor: pointer;">
+              <i data-lucide="help-circle"></i> Ragu-Ragu
+            </button>
+            <button class="btn-clay-primary" id="exam-btn-next" onclick="nextQuestion()" style="cursor: pointer;">
+              Berikutnya <i data-lucide="chevron-right"></i>
+            </button>
+            <button class="btn-clay-primary hidden" id="exam-btn-submit" onclick="submitExamManual()" style="background: var(--clay-success-bg); box-shadow: var(--clay-success-shadow); cursor: pointer;">
+              <i data-lucide="check-circle"></i> Selesai & Kirim
+            </button>
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Timer, Progress bar, Grid Navigasi Soal -->
+        <div class="exam-nav-panel">
+          <!-- Timer Card (Neumorphic Inset) -->
+          <div style="padding: 15px; border-radius: 20px; box-shadow: var(--nm-inset-shadow); display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--bg-main);">
+            <i data-lucide="hourglass" style="color: #ef4444; width: 20px; height: 20px;"></i>
+            <span id="exam-timer-span" style="font-size: 1.4rem; font-weight: 800; font-variant-numeric: tabular-nums;">00:00</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+            <span class="exam-grid-title" id="exam-room-subject">MATEMATIKA</span>
+            <h4 id="exam-room-title" style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); line-height: 1.3;">Penilaian Ujian</h4>
+          </div>
+
+          <!-- Progress Bar Wrapper -->
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div class="exam-progress-wrapper">
+              <div class="exam-progress-bar" id="exam-progress-bar-fill"></div>
+            </div>
+            <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Progres Pengerjaan</span>
+          </div>
+
+          <!-- Grid Nomor Soal -->
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+            <span class="exam-grid-title">Navigasi Soal</span>
+            <div class="question-nav-grid" id="exam-questions-grid">
+              <!-- Grid dinamis -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 4. REVIEW EXAM VIEW -->
+    <div id="review-exam-view" class="hidden" style="display: flex; flex-direction: column; gap: 30px;">
+      <!-- Score summary card -->
+      <div class="right-panel-card" style="min-height: auto; align-items: center; text-align: center; gap: 20px; padding: 40px;">
+        <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main);">Evaluasi Hasil Ujian</h1>
+        <p style="color: var(--text-muted); max-width: 500px; font-size: 0.9rem; margin-top: -10px;" id="review-exam-title">Penilaian Akhir Semester - Matematika Dasar</p>
+        
+        <div style="display: flex; gap: 40px; align-items: center; margin: 10px 0;">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Skor Anda</span>
+            <span id="review-score-value" style="font-size: 3.5rem; font-weight: 800; color: #3b82f6; line-height: 1.1;">80%</span>
+          </div>
+          <div style="width: 2px; height: 60px; background: var(--border-color);"></div>
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+            <div style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">
+              <span style="display:inline-block; width: 10px; height: 10px; background:#10b981; border-radius:50%; margin-right: 6px;"></span>
+              Jawaban Benar: <strong id="review-correct-count" style="color: var(--text-main);">4 / 5</strong>
+            </div>
+            <div style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">
+              <span style="display:inline-block; width: 10px; height: 10px; background:#ef4444; border-radius:50%; margin-right: 6px;"></span>
+              Jawaban Salah: <strong id="review-wrong-count" style="color: var(--text-main);">1</strong>
+            </div>
+          </div>
+        </div>
+
+        <div id="review-status-text">
+          <!-- Status tuntas/tidak tuntas KKM -->
+        </div>
+
+        <button class="btn-clay-primary" onclick="closeReviewAndReturn()" style="padding: 12px 30px; border-radius: 14px; cursor: pointer;">
+          <i data-lucide="home"></i> Kembali ke Dashboard
+        </button>
+      </div>
+
+      <!-- Question detailed review cards -->
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <h3 style="font-size: 1rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">Kunci Jawaban & Pembahasan Detail</h3>
+        <div id="review-questions-list" class="review-question-container">
+          <!-- Renders dinamis oleh app.js -->
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 5. ADMINISTRATOR DASHBOARD VIEW -->
+    <div id="admin-dashboard-view" class="hidden" style="display: flex; flex-direction: column; gap: 30px;">
+      
+      <!-- Top Stats Grid (Sama persis dengan tata letak gambar) -->
+      <div class="stats-grid">
+        <!-- Stats Card 1 -->
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="label">Total Paket Ujian</span>
+            <span class="value" id="stat-total-exams">2</span>
+            <span class="desc">Paket bank soal yang terdaftar</span>
+          </div>
+          <div class="stat-icon-circle blue">
+            <!-- Book Icon -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Stats Card 2 -->
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="label">Total Ujian Diikuti</span>
+            <span class="value" id="stat-total-attempts">2</span>
+            <span class="desc">Selesai disubmit siswa</span>
+          </div>
+          <div class="stat-icon-circle teal">
+            <!-- Users Icon -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Stats Card 3 -->
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="label">Nilai Rata-Rata</span>
+            <span class="value" id="stat-average-score">65%</span>
+            <span class="desc">Dari seluruh peserta evaluasi</span>
+          </div>
+          <div class="stat-icon-circle green">
+            <!-- Ribbon/Award Icon -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="8" r="7"></circle>
+              <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Stats Card 4 -->
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="label">Password Default</span>
+            <span class="value" id="stat-default-password" style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">admin</span>
+            <span class="desc">Password utama administrator</span>
+          </div>
+          <div class="stat-icon-circle yellow">
+            <!-- Lock Icon -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-navigation/Tab Bar (Sama persis dengan tata letak gambar) -->
+      <div class="tab-navbar">
+        <button class="tab-nav-btn active" data-tab="exams">
+          <i data-lucide="file-spreadsheet"></i> Kelola Ujian & Soal
+        </button>
+        <button class="tab-nav-btn" data-tab="teachers">
+          <i data-lucide="graduation-cap"></i> Kelola Guru
+        </button>
+        <button class="tab-nav-btn" data-tab="students">
+          <i data-lucide="users"></i> Kelola Siswa
+        </button>
+        <button class="tab-nav-btn" data-tab="results">
+          <i data-lucide="medal"></i> Hasil Ujian
+        </button>
+      </div>
+
+      <!-- TAB CONTENS 1: KELOLA UJIAN & SOAL (SPLIT LAYOUT) -->
+      <div id="admin-tab-exams" class="content-layout">
+        <!-- Left Panel: Daftar Paket Ujian -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>Daftar Paket Ujian</h3>
+            <button class="btn-add-exam" onclick="openAddExamModal()" style="cursor: pointer;">
+              <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Tambah Ujian
+            </button>
+          </div>
+          <div class="exam-list-container" id="admin-exam-list">
+            <!-- Diisi dinamis oleh admin.js -->
+          </div>
+        </div>
+
+        <!-- Right Panel: detail exam / CRUD / Import word -->
+        <div class="right-panel-card" id="exam-detail-panel">
+          <!-- Default Empty State. Diisi dinamis saat exam diklik -->
+        </div>
+      </div>
+
+      <!-- TAB CONTENS 2: KELOLA GURU -->
+      <div id="admin-tab-teachers" class="right-panel-card hidden" style="gap: 25px;">
+        <div class="detail-section-title">
+          <span>Daftar Master Data Guru Pendamping</span>
+          <button class="btn-add-exam" onclick="openAddTeacherModal()" style="background: var(--clay-primary-bg); box-shadow: var(--clay-primary-shadow); color: white; cursor: pointer;">
+            <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i> Tambah Guru
+          </button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 8%">No</th>
+                <th style="width: 25%">NIP</th>
+                <th>Nama Lengkap & Gelar</th>
+                <th>Mengampu Mapel</th>
+                <th style="width: 12%">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="teachers-table-body">
+              <!-- Diisi dinamis -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB CONTENS 3: KELOLA SISWA -->
+      <div id="admin-tab-students" class="right-panel-card hidden" style="gap: 25px;">
+        <div class="detail-section-title">
+          <span>Daftar Master Data Siswa Ujian</span>
+          <button class="btn-add-exam" onclick="openAddStudentModal()" style="background: var(--clay-primary-bg); box-shadow: var(--clay-primary-shadow); color: white; cursor: pointer;">
+            <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i> Tambah Siswa
+          </button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 8%">No</th>
+                <th style="width: 25%">NISN</th>
+                <th>Nama Lengkap Siswa</th>
+                <th>Kelas / Rombel</th>
+                <th style="width: 12%">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="students-table-body">
+              <!-- Diisi dinamis -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB CONTENS 4: LOG HASIL UJIAN -->
+      <div id="admin-tab-results" class="right-panel-card hidden" style="gap: 25px;">
+        <div class="detail-section-title">
+          <span>Log Hasil Pengerjaan Evaluasi Siswa</span>
+          <button class="btn-add-exam" onclick="exportResultsToCSV()" style="background: var(--clay-success-bg); box-shadow: var(--clay-success-shadow); color: white; cursor: pointer;">
+            <i data-lucide="download" style="width: 14px; height: 14px;"></i> Unduh Log (CSV)
+          </button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 8%">No</th>
+                <th>Nama Siswa (NISN)</th>
+                <th>Paket Ujian</th>
+                <th>Waktu Selesai</th>
+                <th>Skor Akhir</th>
+                <th style="width: 12%">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="results-table-body">
+              <!-- Diisi dinamis -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2026 SMASA-Online. Terintegrasi, Aman, Fleksibel.</p>
+    </footer>
+  </div>
+
+  <!-- MODALS SECTION -->
+
+  <!-- Modal 1: Tambah Paket Ujian -->
+  <div class="modal-overlay hidden" id="add-exam-modal">
+    <div class="modal-content">
+      <div class="detail-section-title">
+        <span>Tambah Paket Ujian Baru</span>
+        <button class="btn-delete-item" onclick="closeAddExamModal()" style="font-size: 1.2rem;">&times;</button>
+      </div>
+      <form id="add-exam-form" onsubmit="createNewExamPackage(event)" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="form-group">
+          <label>Mata Pelajaran (Subjek)</label>
+          <input type="text" id="new-exam-subject" class="form-input" placeholder="Contoh: MATEMATIKA" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Judul Ujian</label>
+          <input type="text" id="new-exam-title" class="form-input" placeholder="Contoh: Penilaian Akhir Semester" required autocomplete="off">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="form-group">
+            <label>Durasi Ujian (Menit)</label>
+            <input type="number" id="new-exam-duration" class="form-input" value="15" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Nilai KKM (Kriteria Ketuntasan)</label>
+            <input type="number" id="new-exam-kkm" class="form-input" value="65" min="0" max="100" required>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px;">
+          <button type="button" class="btn-clay-neutral" onclick="closeAddExamModal()" style="cursor: pointer;">Batal</button>
+          <button type="submit" class="btn-clay-primary" style="cursor: pointer;">Buat Paket Ujian</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Tambah/Edit Soal Ujian -->
+  <div class="modal-overlay hidden" id="question-modal">
+    <div class="modal-content">
+      <div class="detail-section-title">
+        <span id="q-modal-title">Tambah Soal Baru</span>
+        <button class="btn-delete-item" onclick="closeQuestionModal()" style="font-size: 1.2rem;">&times;</button>
+      </div>
+      <form id="question-form" onsubmit="saveQuestionForm(event)" style="display: flex; flex-direction: column; gap: 15px;">
+        <div class="form-group">
+          <label>Pertanyaan Soal</label>
+          <textarea id="q-text-input" class="form-input" style="min-height: 80px; resize: vertical;" placeholder="Tulis teks pertanyaan di sini..." required></textarea>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">Pilihan Jawaban (A-E)</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <strong style="width: 20px;">A.</strong>
+            <input type="text" id="q-opt-A" class="form-input" placeholder="Jawaban opsi A" required autocomplete="off">
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <strong style="width: 20px;">B.</strong>
+            <input type="text" id="q-opt-B" class="form-input" placeholder="Jawaban opsi B" required autocomplete="off">
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <strong style="width: 20px;">C.</strong>
+            <input type="text" id="q-opt-C" class="form-input" placeholder="Jawaban opsi C" required autocomplete="off">
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <strong style="width: 20px;">D.</strong>
+            <input type="text" id="q-opt-D" class="form-input" placeholder="Jawaban opsi D" required autocomplete="off">
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <strong style="width: 20px;">E.</strong>
+            <input type="text" id="q-opt-E" class="form-input" placeholder="Jawaban opsi E" required autocomplete="off">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Kunci Jawaban Benar</label>
+          <select id="q-correct-answer" class="form-input" style="height: 45px;">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Pembahasan Jawaban Benar</label>
+          <textarea id="q-explanation-input" class="form-input" style="min-height: 80px; resize: vertical;" placeholder="Tulis pembahasan soal di sini..."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px;">
+          <button type="button" class="btn-clay-neutral" onclick="closeQuestionModal()" style="cursor: pointer;">Batal</button>
+          <button type="submit" class="btn-clay-primary" style="cursor: pointer;">Simpan Soal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Tambah Guru -->
+  <div class="modal-overlay hidden" id="add-teacher-modal">
+    <div class="modal-content">
+      <div class="detail-section-title">
+        <span>Tambah Guru Pendamping Baru</span>
+        <button class="btn-delete-item" onclick="closeAddTeacherModal()" style="font-size: 1.2rem;">&times;</button>
+      </div>
+      <form id="add-teacher-form" onsubmit="saveTeacherForm(event)" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="form-group">
+          <label>Nomor Induk Pegawai (NIP)</label>
+          <input type="text" id="teacher-nip" class="form-input" placeholder="Masukkan NIP guru" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Nama Lengkap & Gelar</label>
+          <input type="text" id="teacher-name" class="form-input" placeholder="Contoh: Drs. Hermawan, M.Pd." required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Mata Pelajaran Diampu</label>
+          <input type="text" id="teacher-subject" class="form-input" placeholder="Contoh: Matematika" required autocomplete="off">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px;">
+          <button type="button" class="btn-clay-neutral" onclick="closeAddTeacherModal()" style="cursor: pointer;">Batal</button>
+          <button type="submit" class="btn-clay-primary" style="cursor: pointer;">Simpan Data</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Tambah Siswa -->
+  <div class="modal-overlay hidden" id="add-student-modal">
+    <div class="modal-content">
+      <div class="detail-section-title">
+        <span>Tambah Siswa Ujian Baru</span>
+        <button class="btn-delete-item" onclick="closeAddStudentModal()" style="font-size: 1.2rem;">&times;</button>
+      </div>
+      <form id="add-student-form" onsubmit="saveStudentForm(event)" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="form-group">
+          <label>Nomor Induk Siswa Nasional (NISN)</label>
+          <input type="text" id="student-nisn" class="form-input" placeholder="Masukkan NISN siswa" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Nama Lengkap Siswa</label>
+          <input type="text" id="student-name" class="form-input" placeholder="Contoh: Rendi Aditya" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Kelas / Rombel</label>
+          <input type="text" id="student-class" class="form-input" placeholder="Contoh: XII MIPA 3" required autocomplete="off">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 10px;">
+          <button type="button" class="btn-clay-neutral" onclick="closeAddStudentModal()" style="cursor: pointer;">Batal</button>
+          <button type="submit" class="btn-clay-primary" style="cursor: pointer;">Simpan Data</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- LIBRARIES & JAVASCRIPT FILES -->
+
+  <!-- Mammoth.js for client-side Word file conversion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  
+  <!-- Canvas Confetti for celebrations on passing exams -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Lucide Icons Library (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Local Custom Application Scripts -->
+
+</body>
+</html>
